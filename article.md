@@ -66,13 +66,13 @@
 </div>
 </div>
 <p class="">注意到我们可以指定多个泛型的参数，而且这些参数还不一定得是<span><code>T</code></span>这样的<em>类型参数</em>——它还可以是<em>非类型参数</em><span class="">，如这里的整型</span><span class=""><code>N</code></span>，甚至可以是嵌套的模板参数。</p>
-这些非常简单的求较大值的例子可以让我们略微感受到模板的强大之处：只要类型<span><code>T</code></span>可以拷贝构造、定义了大于运算符，就可以套用这个函数。如果我们有心，可以用模板实现一整套泛型的算法，并提供简单的借口。设想一下，当我们要给自定义的类型排序的时候，不需要手写快排，而定义比较操作符，直接调用一个模板函数即可；当我们要使用某些数据结构的时候，直接把我们的类名告诉模板类即可。
+这些非常简单的求较大值的例子可以让我们略微感受到模板的强大之处：只要类型<span><code>T</code></span>可以拷贝构造、定义了大于运算符，就可以套用这个函数。如果我们有心，可以用模板实现一整套泛型的算法，并提供简单的接口。设想一下，当我们要给自定义的类型排序的时候，不需要手写快排，而定义比较操作符，直接调用一个模板函数即可；当我们要使用某些数据结构的时候，直接把我们的类名告诉模板类即可。
 
-事实上C++的STL就是这样一个玩意儿。STL的全称是Standard Template Library，里面用模板实现了各种泛型的算法和数据结构。随叫随到，即写即用，从此无心造轮子，管他开不开O2。
+事实上C++的STL就是这样一个玩意儿。STL的全称是Standard Template Library，里面用模板实现了各种泛型的算法和数据结构。随叫随到，即写即用，从此无需造轮子，管他开不开O2。
 
 限于篇幅原因，模板的基础知识只能介绍到这。有关模板的更多知识，推荐大家阅读这个网页：<a href="https://isocpp.org/wiki/faq/templates">https://isocpp.org/wiki/faq/templates</a>。
 <h2>模板元编程</h2>
-模板当然是个好东西，它非常之强大，可以完成原来写C代码时想都不敢想的功能。但问题也就在于它太强大了，就连当初设计模板的人也不知道它究竟有多么厉害。事实上，可以证明模板的这套语言本身就是图灵完备的，也就是说，光是使用模板，我们就可以在编译时完成一切计算。这就是所谓的<strong>模板元编程</strong>（template metaprogramming，TML）。
+模板当然是个好东西，它非常之强大，可以完成原来写C代码时想都不敢想的功能。但问题也就在于它太强大了，就连当初设计模板的人也不知道它究竟有多么厉害。事实上，可以证明模板的这套语言本身就是图灵完备的，也就是说，光是使用模板，我们就可以在*编译*时完成一切计算。这就是所谓的<strong>模板元编程</strong>（template metaprogramming，TML）。
 <h3>从斐波那契谈起</h3>
 如果要你用正常的C++求斐波那契数列，你会怎么写？当然会是像下面这样：
 <div class="CodeMirror cm-s-default CodeMirror-wrap">
@@ -143,7 +143,7 @@
 </div>
 </div>
 </div>
-<p class="">我们在<span><code>Fib</code></span>类里定义了一个静态的常量<span><code>value</code></span>，代表第<span><code>N</code></span>个斐波那契数的值。<span><code>N = 0</code></span>和<span><code>N = 1</code></span>的两个模板特化是递归的边界条件，一般的情况则直接利用公式递归计算。整个计算过程都是在编译时完成的，而且由于模板的实例化机制，这个递归的过程还是记忆化的，即同一个斐波那契数不会被计算两次，计算的复杂度为<span id="MathJax-Element-2-Frame" class="MathJax_SVG"></span>而非<span id="MathJax-Element-26-Frame" class="MathJax_SVG"></span>。</p>
+<p class="">我们在<span><code>Fib</code></span>类里定义了一个静态的常量<span><code>value</code></span>，代表第<span><code>N</code></span>个斐波那契数的值。<span><code>N = 0</code></span>和<span><code>N = 1</code></span>的两个模板特化是递归的边界条件，一般的情况则直接利用公式递归计算。整个计算过程都是在编译时完成的，而且由于模板的实例化机制，这个递归的过程还是记忆化的，即同一个斐波那契数不会被计算两次，计算的复杂度为O(n)而非O(2^n)。</p>
 如果我们要使用第10个斐波那契数列的值，只要用<span><code>Fib&lt;10&gt;::value</code></span>就可以了。值得一提的是，由于计算过程需要在编译时完成，模板中的参数必须得是编译时就知晓其值的常量。
 <p class="">另外，通常编译器会对模板的递归层数作限制，在<span><code>clang</code></span><span class="">编译器上默认是256层。可以使用</span><span class=""><code>-ftemplate-depth=N</code></span><span class="">来将层数设为</span><span><code>N</code></span><span class="">，但太大的层数会使得编译器自己栈溢出……所以这玩意并没有什么○用。</span></p>
 
